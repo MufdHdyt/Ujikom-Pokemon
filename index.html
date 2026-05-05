@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex — Silph Co.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:Nunito,sans-serif;background:#0d0d1a;min-height:100vh;color:#fff;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(59,90,168,.25) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(227,53,13,.15) 0%,transparent 60%),#0d0d1a;z-index:0}
+        header{position:relative;z-index:10;background:linear-gradient(135deg,#e3350d,#b52a0a);padding:18px 24px 16px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 24px rgba(227,53,13,.4)}
+        .pokeball{width:40px;height:40px;background:conic-gradient(#fff 0deg 180deg,#e3350d 180deg 360deg);border-radius:50%;border:3px solid #222;position:relative;flex-shrink:0}
+        .pokeball::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;background:#fff;border-radius:50%;border:2px solid #222}
+        .pokeball::before{content:'';position:absolute;left:0;top:50%;width:100%;height:3px;background:#222;transform:translateY(-50%)}
+        header h1{font-family:'Press Start 2P',monospace;font-size:13px;color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,.3)}
+        header p{font-size:11px;color:rgba(255,255,255,.75);margin-top:3px}
+        .search-wrap{position:relative;z-index:10;padding:18px 20px 10px}
+        .search-wrap input{width:100%;padding:12px 18px 12px 46px;border-radius:50px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.08);color:#fff;font-family:Nunito,sans-serif;font-size:15px;font-weight:700;outline:none;transition:border-color .2s}
+        .search-wrap input:focus{border-color:#f4d23c;background:rgba(255,255,255,.12)}
+        .search-icon{position:absolute;left:36px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+        .grid{position:relative;z-index:5;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:10px 16px 30px}
+        .card{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform .2s;backdrop-filter:blur(8px)}
+        .card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.25)}
+        .card-img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+        .card-body{padding:10px 12px 12px}
+        .card-name{font-size:15px;font-weight:900;margin-bottom:5px}
+        .types{display:flex;flex-wrap:wrap;gap:4px}
+        .type-badge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase}
+        .t-fire{background:#ff6b35}.t-water{background:#4fc3f7;color:#003}.t-grass{background:#66bb6a}.t-poison{background:#ab47bc}.t-electric{background:#ffee58;color:#333}.t-ghost{background:#7e57c2}.t-dark{background:#546e7a}.t-psychic{background:#f06292}
+    #detail-view{display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;background:#0d0d1a;animation:slideUp .3s ease}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .back-btn{position:absolute;top:16px;left:16px;z-index:10;background:rgba(0,0,0,0.6);color:#fff;padding:8px 16px;border-radius:50px;border:none;cursor:pointer}
+    .detail-hero img{width:100%;aspect-ratio:16/9;object-fit:cover}
+    .detail-body{padding:20px;margin-top:-30px;position:relative;background:#0d0d1a;border-top-left-radius:30px;border-top-right-radius:30px}
+    .section-title{color:#f4d23c;font-size:11px;font-weight:900;margin:20px 0 10px;text-transform:uppercase;letter-spacing:1px}
+    .desc-box{background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;font-size:13px;line-height:1.6}
+    .stat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .stat-label{width:60px;font-size:10px;color:gray}
+    .stat-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+    .stat-bar{height:100%}
+</style>
+
+</head>
+<body>
+    <header>
+        <div class="pokeball"></div>
+        <div><h1>POKÉDEX</h1><p>Silph Co. — Pokémon Encyclopedia</p></div>
+    </header>
+<div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Cari Pokémon..." oninput="filterPokemon()">
+</div>
+
+<div class="grid" id="pokeGrid"></div>
+
+<div id="detail-view">
+    <div class="detail-hero">
+        <button class="back-btn" onclick="closeDetail()">← Kembali</button>
+        <img id="d-img" src="">
+    </div>
+    <div class="detail-body">
+        <h2 id="d-name" style="font-family:'Press Start 2P'"></h2>
+        <div id="d-types" class="types" style="margin-top:10px"></div>
+        <div class="section-title">Deskripsi</div>
+        <div id="d-desc" class="desc-box"></div>
+        <div class="section-title">Base Stats</div>
+        <div id="d-stats"></div>
+    </div>
+</div>
+
+<script>
+    const POKEMON = [
+        {
+            id: 1, name: "Gengar", emoji: "👻", types: ["ghost", "poison"], 
+            img: "https://files.catbox.moe/gsvzsk.png", 
+            desc: "Gengar adalah glass cannon dengan Special Attack tinggi dan kecepatan luar biasa. Cocok untuk menghabisi lawan dengan cepat.",
+            role: "Special Sweeper", ability: "Cursed Body", weakness: "Ghost, Dark, Psychic", evolution: "Final",
+            stats: {HP: 60, Atk: 65, Def: 60, SpAtk: 130, SpDef: 75, Spd: 110}
+        },
+        {
+            id: 2, name: "Flareon", emoji: "🔥", types: ["fire"], 
+            img: "https://files.catbox.moe/r4z5e6.png", 
+            desc: "Flareon memiliki suhu tubuh yang sangat panas. Ia menyimpan api di dalam tubuhnya sebelum menyerang.",
+            role: "Physical Attacker", ability: "Flash Fire", weakness: "Water, Ground, Rock", evolution: "Eeveelution",
+            stats: {HP: 65, Atk: 130, Def: 60, SpAtk: 95, SpDef: 110, Spd: 65}
+        },
+        {
+            id: 3, name: "Greninja", emoji: "🥷", types: ["water", "dark"], 
+            img: "https://files.catbox.moe/42f954.png", 
+            desc: "Ninja legendaris yang bergerak sangat cepat. Menggunakan Shuriken air untuk melumpuhkan musuh.",
+            role: "Assassin", ability: "Battle Bond", weakness: "Electric, Grass, Fairy", evolution: "Final",
+            stats: {HP: 72, Atk: 95, Def: 67, SpAtk: 103, SpDef: 71, Spd: 122}
+        }
+    ];
+
+    const TC = {fire:'t-fire', water:'t-water', grass:'t-grass', poison:'t-poison', electric:'t-electric', ghost:'t-ghost', dark:'t-dark'};
+    const SC = {HP:'#ef5350', Atk:'#ff9800', Def:'#42a5f5', SpAtk:'#ce93d8', SpDef:'#80cbc4', Spd:'#ffee58'};
+
+    function renderGrid(list) {
+        const g = document.getElementById('pokeGrid');
+        g.innerHTML = list.map(p => `
+            <div class="card" onclick="openDetail(\${p.id})">
+                <img class="card-img" src="\${p.img}">
+                <div class="card-body">
+                    <div class="card-name">\${p.emoji} \${p.name}</div>
+                    <div class="types">\${p.types.map(t => `<span class="type-badge \${TC[t]}">\${t}</span>`).join('')}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openDetail(id) {
+        const p = POKEMON.find(x => x.id === id);
+        document.getElementById('d-img').src = p.img;
+        document.getElementById('d-name').innerText = p.name;
+        document.getElementById('d-types').innerHTML = p.types.map(t => `<span class="type-badge \${TC[t]}">\${t}</span>`).join('');
+        document.getElementById('d-desc').innerText = p.desc;
+        document.getElementById('d-stats').innerHTML = Object.entries(p.stats).map(([k, v]) => `
+            <div class="stat-row">
+                <span class="stat-label">\${k}</span>
+                <span class="stat-val">\${v}</span>
+                <div class="stat-bar-wrap"><div class="stat-bar" style="width:\${(v/150)*100}%; background:\${SC[k]}"></div></div>
+            </div>
+        `).join('');
+        document.getElementById('detail-view').style.display = 'block';
+    }
+
+    function filterPokemon() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = POKEMON.filter(p => p.name.toLowerCase().includes(query));
+        renderGrid(filtered.length ? filtered : POKEMON);
+    }
+
+    function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
+    
+    renderGrid(POKEMON);
+</script>
+
+</body>
+</html>
