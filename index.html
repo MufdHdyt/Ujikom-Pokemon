@@ -22,74 +22,73 @@
         .grid{position:relative;z-index:5;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:10px 16px 30px}
         .card{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform .2s;backdrop-filter:blur(8px)}
         .card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.25)}
-        .card-img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+        .card-img-container{width:100%;aspect-ratio:16/10;background:rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .card-img{width:100%;height:100%;object-fit:contain;display:block}
         .card-body{padding:10px 12px 12px}
         .card-name{font-size:15px;font-weight:900;margin-bottom:5px}
         .types{display:flex;flex-wrap:wrap;gap:4px}
         .type-badge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase}
         .t-fire{background:#ff6b35}.t-water{background:#4fc3f7;color:#003}.t-grass{background:#66bb6a}.t-poison{background:#ab47bc}.t-electric{background:#ffee58;color:#333}.t-ghost{background:#7e57c2}.t-dark{background:#546e7a}.t-psychic{background:#f06292}
-    #detail-view{display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;background:#0d0d1a;animation:slideUp .3s ease}
-    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    .back-btn{position:absolute;top:16px;left:16px;z-index:10;background:rgba(0,0,0,0.6);color:#fff;padding:8px 16px;border-radius:50px;border:none;cursor:pointer}
-    .detail-hero img{width:100%;aspect-ratio:16/9;object-fit:cover}
-    .detail-body{padding:20px;margin-top:-30px;position:relative;background:#0d0d1a;border-top-left-radius:30px;border-top-right-radius:30px}
-    .section-title{color:#f4d23c;font-size:11px;font-weight:900;margin:20px 0 10px;text-transform:uppercase;letter-spacing:1px}
-    .desc-box{background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;font-size:13px;line-height:1.6}
-    .stat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-    .stat-label{width:60px;font-size:10px;color:gray}
-    .stat-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
-    .stat-bar{height:100%}
-</style>
-
+        #detail-view{display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;background:#0d0d1a;animation:slideUp .3s ease}
+        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        .back-btn{position:absolute;top:16px;left:16px;z-index:10;background:rgba(0,0,0,0.6);color:#fff;padding:8px 16px;border-radius:50px;border:none;cursor:pointer}
+        .detail-hero{width:100%;aspect-ratio:16/9;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center}
+        .detail-hero img{max-width:80%;max-height:80%;object-fit:contain}
+        .detail-body{padding:20px;margin-top:-30px;position:relative;background:#0d0d1a;border-top-left-radius:30px;border-top-right-radius:30px}
+        .section-title{color:#f4d23c;font-size:11px;font-weight:900;margin:20px 0 10px;text-transform:uppercase;letter-spacing:1px}
+        .desc-box{background:rgba(255,255,255,0.05);padding:15px;border-radius:12px;font-size:13px;line-height:1.6}
+        .stat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+        .stat-label{width:60px;font-size:10px;color:gray}
+        .stat-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+        .stat-bar{height:100%}
+    </style>
 </head>
 <body>
     <header>
         <div class="pokeball"></div>
         <div><h1>POKÉDEX</h1><p>Silph Co. — Pokémon Encyclopedia</p></div>
     </header>
-<div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Cari Pokémon..." oninput="filterPokemon()">
-</div>
-
-<div class="grid" id="pokeGrid"></div>
-
-<div id="detail-view">
-    <div class="detail-hero">
-        <button class="back-btn" onclick="closeDetail()">← Kembali</button>
-        <img id="d-img" src="">
+    <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Cari Pokémon..." oninput="filterPokemon()">
     </div>
-    <div class="detail-body">
-        <h2 id="d-name" style="font-family:'Press Start 2P'"></h2>
-        <div id="d-types" class="types" style="margin-top:10px"></div>
-        <div class="section-title">Deskripsi</div>
-        <div id="d-desc" class="desc-box"></div>
-        <div class="section-title">Base Stats</div>
-        <div id="d-stats"></div>
+
+    <div class="grid" id="pokeGrid"></div>
+
+    <div id="detail-view">
+        <div class="detail-hero">
+            <button class="back-btn" onclick="closeDetail()">← Kembali</button>
+            <img id="d-img" src="" alt="pokemon">
+        </div>
+        <div class="detail-body">
+            <h2 id="d-name" style="font-family:'Press Start 2P'"></h2>
+            <div id="d-types" class="types" style="margin-top:10px"></div>
+            <div class="section-title">Deskripsi</div>
+            <div id="d-desc" class="desc-box"></div>
+            <div class="section-title">Base Stats</div>
+            <div id="d-stats"></div>
+        </div>
     </div>
-</div>
 
 <script>
+    // Link gambar menggunakan Catbox agar stabil di web
     const POKEMON = [
         {
             id: 1, name: "Gengar", emoji: "👻", types: ["ghost", "poison"], 
             img: "https://files.catbox.moe/gsvzsk.png", 
             desc: "Gengar adalah glass cannon dengan Special Attack tinggi dan kecepatan luar biasa. Cocok untuk menghabisi lawan dengan cepat.",
-            role: "Special Sweeper", ability: "Cursed Body", weakness: "Ghost, Dark, Psychic", evolution: "Final",
             stats: {HP: 60, Atk: 65, Def: 60, SpAtk: 130, SpDef: 75, Spd: 110}
         },
         {
             id: 2, name: "Flareon", emoji: "🔥", types: ["fire"], 
             img: "https://files.catbox.moe/r4z5e6.png", 
             desc: "Flareon memiliki suhu tubuh yang sangat panas. Ia menyimpan api di dalam tubuhnya sebelum menyerang.",
-            role: "Physical Attacker", ability: "Flash Fire", weakness: "Water, Ground, Rock", evolution: "Eeveelution",
             stats: {HP: 65, Atk: 130, Def: 60, SpAtk: 95, SpDef: 110, Spd: 65}
         },
         {
             id: 3, name: "Greninja", emoji: "🥷", types: ["water", "dark"], 
             img: "https://files.catbox.moe/42f954.png", 
             desc: "Ninja legendaris yang bergerak sangat cepat. Menggunakan Shuriken air untuk melumpuhkan musuh.",
-            role: "Assassin", ability: "Battle Bond", weakness: "Electric, Grass, Fairy", evolution: "Final",
             stats: {HP: 72, Atk: 95, Def: 67, SpAtk: 103, SpDef: 71, Spd: 122}
         }
     ];
@@ -99,12 +98,18 @@
 
     function renderGrid(list) {
         const g = document.getElementById('pokeGrid');
+        if (!list.length) {
+            g.innerHTML = "<p style='grid-column: span 2; text-align: center; opacity: 0.5;'>Pokémon tidak ditemukan...</p>";
+            return;
+        }
         g.innerHTML = list.map(p => `
-            <div class="card" onclick="openDetail(\${p.id})">
-                <img class="card-img" src="\${p.img}">
+            <div class="card" onclick="openDetail(${p.id})">
+                <div class="card-img-container">
+                    <img class="card-img" src="${p.img}" alt="${p.name}">
+                </div>
                 <div class="card-body">
-                    <div class="card-name">\${p.emoji} \${p.name}</div>
-                    <div class="types">\${p.types.map(t => `<span class="type-badge \${TC[t]}">\${t}</span>`).join('')}</div>
+                    <div class="card-name">${p.emoji} ${p.name}</div>
+                    <div class="types">${p.types.map(t => `<span class="type-badge ${TC[t] || ''}">${t}</span>`).join('')}</div>
                 </div>
             </div>
         `).join('');
@@ -112,30 +117,35 @@
 
     function openDetail(id) {
         const p = POKEMON.find(x => x.id === id);
+        if(!p) return;
         document.getElementById('d-img').src = p.img;
         document.getElementById('d-name').innerText = p.name;
-        document.getElementById('d-types').innerHTML = p.types.map(t => `<span class="type-badge \${TC[t]}">\${t}</span>`).join('');
+        document.getElementById('d-types').innerHTML = p.types.map(t => `<span class="type-badge ${TC[t] || ''}">${t}</span>`).join('');
         document.getElementById('d-desc').innerText = p.desc;
         document.getElementById('d-stats').innerHTML = Object.entries(p.stats).map(([k, v]) => `
             <div class="stat-row">
-                <span class="stat-label">\${k}</span>
-                <span class="stat-val">\${v}</span>
-                <div class="stat-bar-wrap"><div class="stat-bar" style="width:\${(v/150)*100}%; background:\${SC[k]}"></div></div>
+                <span class="stat-label">${k}</span>
+                <span class="stat-val" style="font-size:12px; font-weight:bold; width:30px">${v}</span>
+                <div class="stat-bar-wrap"><div class="stat-bar" style="width:${(v/150)*100}%; background:${SC[k]}"></div></div>
             </div>
         `).join('');
         document.getElementById('detail-view').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Stop scroll body
     }
 
     function filterPokemon() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
         const filtered = POKEMON.filter(p => p.name.toLowerCase().includes(query));
-        renderGrid(filtered.length ? filtered : POKEMON);
+        renderGrid(filtered);
     }
 
-    function closeDetail() { document.getElementById('detail-view').style.display = 'none'; }
+    function closeDetail() { 
+        document.getElementById('detail-view').style.display = 'none'; 
+        document.body.style.overflow = 'auto';
+    }
     
-    renderGrid(POKEMON);
+    // Jalankan render pertama kali
+    window.onload = () => renderGrid(POKEMON);
 </script>
-
 </body>
 </html>
